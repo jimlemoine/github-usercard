@@ -3,7 +3,8 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-
+import axios from 'axios';
+// axios.get('https://api.github.com/users/jimlemoine');
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -28,7 +29,11 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,7 +54,77 @@ const followersArray = [];
       </div>
     </div>
 */
+function userCard({login, avatar_url, html_url, name, location, bio, followers, following}) {
+  const card = document.createElement('div');
+  const userImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const nameOfUser = document.createElement('h3');
+  const userName = document.createElement('p');
+  const userLocation = document.createElement('p');
+  const profile = document.createElement('p');
+  const page = document.createElement('a');
+  const userFollowers = document.createElement('p');
+  const userFollowing = document.createElement('p');
+  const userBio = document.createElement('p');
 
+  card.classList.add('card');
+  userImg.src = avatar_url;
+  cardInfo.classList.add('card-info');
+  nameOfUser.classList.add('name');
+  nameOfUser.textContent = name;
+  userName.classList.add('username');
+  userName.textContent = login;
+  userLocation.textContent = `Location: ${location}`;
+  profile.textContent = `Profile: ${page}`;
+  page.href = html_url;
+  page.textContent = html_url;
+  userFollowers.textContent = `Followers: ${followers}`;
+  userFollowing.textContent = `Following: ${following}`;
+  userBio.textContent = `Bio: ${bio}`;
+
+  card.appendChild(userImg);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(nameOfUser);
+  cardInfo.appendChild(userName);
+  cardInfo.appendChild(userLocation);
+  cardInfo.appendChild(profile);
+  profile.appendChild(page);
+  cardInfo.appendChild(userFollowers);
+  cardInfo.appendChild(userFollowing);
+  cardInfo.appendChild(userBio);
+  return card;
+}
+//STEP 4
+const cardsDiv = document.querySelector('.cards');
+
+axios.get(`https://api.github.com/users/jimlemoine`)
+    .then(resp => {
+      const personCard = userCard(resp.data);
+      cardsDiv.appendChild(personCard);
+    })
+    .catch(err => {
+      const errorText = document.createElement('p');
+      errorText.textContent = "The API call didn't work";
+      document.body.appendChild(errorText);
+    })
+//STEP 5
+for (let i = 0; i < followersArray.length; i++) {
+  axios.get(`https://api.github.com/users/${followersArray[i]}`)
+    .then(resp => {
+      const personCard = userCard(resp.data);
+      cardsDiv.appendChild(personCard);
+    })
+    .catch(err => {
+      const errorText = document.createElement('p');
+      errorText.textContent = "The API call didn't work";
+      document.body.appendChild(errorText);
+    })
+}
+
+//TESTING
+// axios.get('https://api.github.com/users/jimlemoine')
+//   .then(resp => console.log(resp.data))
+//   .catch(err => console.log(err));
 /*
   List of LS Instructors Github username's:
     tetondan
